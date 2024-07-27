@@ -8,7 +8,7 @@ import os
 
 router = APIRouter()
 
-@router.post("/score", response_model=ScoreResponse)
+@router.post("/", response_model=ScoreResponse)
 async def score_resume_endpoint(file: UploadFile = File(...)):
     try:
         file_extension = os.path.splitext(file.filename)[1].lower()
