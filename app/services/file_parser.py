@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import docx
 import fitz
 import os
 
@@ -18,12 +19,22 @@ class PDFTextExtractor(TextExtractorStrategy):
             page = document.load_page(page_num)
             text += page.get_text("text")
         return text
+    
+# Concrete Strategy for DOCX
+class DOCXTextExtractor(TextExtractorStrategy):
+    def extract_text(self, docx_path):
+        doc = docx.Document(docx_path)
+        text = ""
+        for paragraph in doc.paragraphs:
+            text += paragraph.text + "\n"
+        return text
 
 # Context class
 class TextExtractor:
     def __init__(self):
         self.parsers = {
             '.pdf': PDFTextExtractor(),
+            '.docx': DOCXTextExtractor()
         }
 
     def extract_text(self, file_path):
