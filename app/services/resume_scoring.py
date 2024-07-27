@@ -56,11 +56,36 @@ PROMPT_TEMPLATE = Template("""
     It should have the following keys:
     - "score": the total score out of 100
     - "feedback": the detailed feedback with specific examples from the resume, including areas of strength, areas for improvement, and suggestions for enhancement
+
+    USE THE FOLLOWING FORMAT FOR YOUR RESPONSE:
+    ```
+    {
+        "score": 90,
+        "feedback": {
+            "content": {
+                "strengths": [],
+                "areas_for_improvement": [],
+                "suggestions": []
+            },
+            "format": {
+                "strengths": [],
+                "areas_for_improvement": [],
+                "suggestions": []
+                },
+            "additionals": {
+                "strengths": [],
+                "areas_for_improvement": [],
+                "suggestions": []
+            }
+            
+        }
+    }```
     """)
 
 def parse_llm_response(response: str) -> ScoreResponse:
     try:
         result = response.replace('```', '')
+        print(result)
         result = json.loads(result)
         return ScoreResponse(**result)
     except Exception as e:

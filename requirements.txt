@@ -6,3 +6,5 @@ PyMuPDF
 fastapi
 uvicorn
 pydantic
+redis
+redis[hiredis]
