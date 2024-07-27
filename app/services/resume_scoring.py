@@ -91,16 +91,14 @@ def parse_llm_response(response: str) -> ScoreResponse:
         raise ValueError(f"Failed to parse LLM response: {e}")
 
 
-def score_resume(resume: Resume, llm) -> ScoreResponse:
+def score_resume(resume: Resume, Client) -> ScoreResponse:
     prompt = PROMPT_TEMPLATE.substitute(
         pages=resume.pages,
         fonts=resume.fonts,
         resume_text=resume.text,
     )
-    response = llm.stream_complete(prompt)
-    result = []
-    for chunk in response:
-        result.append(chunk.delta)
-    result = "".join(result)
+    response = Client.stream_complete(prompt)
+    result = ''.join([chunk.delta for chunk in response])
     jsonified = parse_llm_response(result)
     return jsonified
+

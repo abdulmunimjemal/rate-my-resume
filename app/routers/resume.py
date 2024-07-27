@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File
-from llama_index.llms.together import TogetherLLM
 from app.models.resume import Resume, ScoreResponse
 from app.services.resume_scoring import score_resume
 from app.services.file_parser import TextExtractor
 from app.enums.file_extension import AllowedFileExtension
 from app.config import settings
+from llama_index.llms.together import TogetherLLM
 import json, os
 import redis, uuid
 from hashlib import sha256
@@ -12,7 +12,7 @@ from hashlib import sha256
 router = APIRouter()
 
 # Initialize the LLM
-llm = TogetherLLM(
+client = TogetherLLM(
     model=settings.MODEL_NAME,
     api_key=settings.TOGETHER_API_KEY,
     max_tokens=settings.MAX_TOKENS,
@@ -31,7 +31,7 @@ def healthy_file_size(file, max_size=2):
     file_size = file.tell()
     file.seek(0)
     return file_size <= max_size * 1024 * 1024
-    
+
 
 @router.post("/score", response_model=dict)
 async def score_resume_endpoint(file: UploadFile = File(...)):
@@ -59,7 +59,7 @@ async def score_resume_endpoint(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail=f"Error extracting text from the resume.")
     try:
         resume = Resume(text=text, pages=pages, fonts=fonts)
-        result = score_resume(resume, llm)
+        result = score_resume(resume, client)
         result_id = str(uuid.uuid4())
         redis_client.set(result_id, json.dumps(result.dict()), ex=settings.REDIS_EXPIRATION)
     except Exception as e:
@@ -69,7 +69,6 @@ async def score_resume_endpoint(file: UploadFile = File(...)):
     # post processing cleanup
     if os.path.exists(file_path):
         os.remove(file_path)
-
     return {"result_id": result_id}
 
 @router.get("/score/{result_id}", response_model=ScoreResponse)
