@@ -3,3 +3,6 @@ llama-index-llms-together
 python-dotenv
 python-docx
 PyMuPDF
+fastapi
+uvicorn
+pydantic
