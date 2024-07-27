@@ -1,14 +1,8 @@
 from string import Template
-from llama_index.llms.together import TogetherLLM
 from app.config import settings
 from app.models.resume import Resume, ScoreResponse
 import json
 
-llm = TogetherLLM(
-    model=settings.MODEL_NAME,
-    api_key=settings.TOGETHER_API_KEY,
-    max_tokens=settings.MAX_TOKENS,
-)
 
 PROMPT_TEMPLATE = Template("""
     You are a resume review expert. Your task is to score the following resume based on the provided checklist, and then give detailed feedback with specific examples from the resume. The feedback should highlight areas of strength, areas for improvement, and include suggestions for enhancement.
@@ -57,22 +51,28 @@ PROMPT_TEMPLATE = Template("""
     - "score": the total score out of 100
     - "feedback": the detailed feedback with specific examples from the resume, including areas of strength, areas for improvement, and suggestions for enhancement
 
+    Scoring should be assumed based on your expertise and the checklist provided.
+    
+    
     USE THE FOLLOWING FORMAT FOR YOUR RESPONSE:
     ```
     {
         "score": 90,
         "feedback": {
             "content": {
+                "score": 89,
                 "strengths": [],
                 "areas_for_improvement": [],
                 "suggestions": []
             },
             "format": {
+                "score": 90,
                 "strengths": [],
                 "areas_for_improvement": [],
                 "suggestions": []
                 },
             "additionals": {
+                "score": 91,
                 "strengths": [],
                 "areas_for_improvement": [],
                 "suggestions": []
@@ -85,14 +85,13 @@ PROMPT_TEMPLATE = Template("""
 def parse_llm_response(response: str) -> ScoreResponse:
     try:
         result = response.replace('```', '')
-        print(result)
         result = json.loads(result)
         return ScoreResponse(**result)
     except Exception as e:
         raise ValueError(f"Failed to parse LLM response: {e}")
 
 
-def score_resume(resume: Resume) -> ScoreResponse:
+def score_resume(resume: Resume, llm) -> ScoreResponse:
     prompt = PROMPT_TEMPLATE.substitute(
         pages=resume.pages,
         fonts=resume.fonts,
