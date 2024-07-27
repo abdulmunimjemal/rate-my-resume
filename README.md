@@ -10,6 +10,7 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
   - [Usage](#usage)
   - [API Endpoints](#api-endpoints)
     - [Score Resume](#score-resume)
+  - [Project Structure](#project-structure)
   - [Conributing](#conributing)
 
 ## Installation
@@ -59,19 +60,63 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
 - **Method**: `POST`
 - **Request Body**: Upload a file (`.pdf` or `.docx`)
 - **Response**: Returns the score and feedback for the uploaded resume
-- **Example**:
+- **Example Response**:
 
-````json
-{
- "score": 84,
- "feedback": "The resume is well-structured and effectively showcases the candidate's technical skills and experience. However, there are some areas that need improvement.\n\n**Content Checklist:**\nThe resume contains all the necessary sections, including Experience, Education, and Contact information. The Skills section is well-organized, but it includes language skills, which could be removed. The Experience section effectively demonstrates the candidate's technical skills and achievements.\n\n* Strength: The candidate's achievements and impact are clearly stated in the Experience section, such as 'achieving 80% better response time' and 'contributing to a 60% increase in quarterly revenue.'\n* Improvement: The Relevant Courses section is not necessary and could be removed. The candidate's education is already stated, and the courses listed do not add significant value.\n\n**Format Checklist:**\nThe resume is one page long, and the font size is mostly consistent. However, the font size of 7.5 pt is too small and should be increased to at least 10 pt.\n* Improvement: The font size of 7.5 pt should be increased to at least 10 pt. The links to the candidate's GitHub and LinkedIn profiles are not clickable and should be made clickable.\n\n**Additionals Checklist:**\nThe candidate's achievements are bolded, but not consistently throughout the resume. The Relevant Projects section is well-organized, but the dates could be formatted consistently.\n* Improvement: The dates in the Relevant Projects section should be formatted consistently, such as 'Feb 2021 - June 2022' instead of 'Feb 2021 – June 2022.'\n* Increase the font size of 7.5 pt to at least 10 pt.\n* Make the links to the candidate's GitHub and LinkedIn profiles clickable.\n* Format the dates in the Relevant Projects section consistently.\n* Consider adding a brief summary or overview of the candidate's experience and skills at the top of the resume.\n* Consider bolding the candidate's achievements consistently throughout the resume."
-}```
+  ```bash
+  {
+  "score": 83,
+  "feedback": {
+      "content": {
+      "strengths": [
+          "The resume contains all the necessary sections, including Experience, Relevant Projects, Education, and Contact information.",
+          "The Skills section is well-organized and includes relevant programming languages, frameworks, and tools.",
+          "The Experience section effectively describes impact and achievements, rather than just responsibilities."
+      ],
+      "areas_for_improvement": [
+          "The resume includes a Relevant Courses section, which could be removed or greatly reduced.",
+          "Some bullet points in the Experience section are a bit lengthy and could be broken up for better readability."
+      ],
+      "suggestions_for_enhancement": [
+          "Consider adding more specific metrics or recognition to the Experience section to further demonstrate impact.",
+          "Use bolding consistently throughout the resume to highlight achievements and technologies."
+      ]
+      },
+      "format": {
+      "strengths": [
+          "The resume is well-organized and easy to read, with clear headings and bullet points.",
+          "The use of whitespace is balanced, making the resume visually appealing."
+      ],
+      "areas_for_improvement": [
+          "The font size is too small in some areas (7.5 pt), which may make it difficult to read.",
+          "Some links are not clickable, which could make it harder for recruiters to access the candidate's online profiles."
+      ],
+      "suggestions_for_enhancement": [
+          "Increase the font size to at least 10 pt to improve readability.",
+          "Make sure all links are clickable to facilitate easy access to the candidate's online profiles."
+      ]
+      },
+      "additionals": {
+      "strengths": [
+          "The resume effectively highlights achievements and recognition in the Experience section.",
+          "The use of bolding to highlight technologies and tools is effective."
+      ],
+      "areas_for_improvement": [
+          "Some sections, such as the Skills section, could be reorganized to better cater to the role."
+      ],
+      "suggestions_for_enhancement": [
+          "Consider reorganizing the Skills section to prioritize the most relevant technologies and tools for the role.",
+          "Use bolding more consistently throughout the resume to highlight achievements and technologies."
+      ]
+    }
+  }
+  ```
 
 ## Project Structure
+
 The project structure is as follows:
 
 ```bash
-fastapi-backend/
+rate-my-resume/
 ├── app/
 │   ├── __init__.py
 │   ├── main.py
@@ -92,7 +137,7 @@ fastapi-backend/
 ├── .env
 ├── requirements.txt
 └── README.md
-````
+```
 
 ## Conributing
 
