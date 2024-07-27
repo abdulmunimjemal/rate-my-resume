@@ -3,6 +3,7 @@ import docx
 import fitz
 import os
 import zipfile, re
+from collections import defaultdict
 
 # Helper 
 
@@ -43,7 +44,7 @@ class PDFTextExtractor(TextExtractorStrategy):
 class DOCXTextExtractor(TextExtractorStrategy):
     def extract_text(self, docx_path):
         doc = docx.Document(docx_path)
-        num_pages = get_docx_page_count(docx_path)
+        num_pages = DOCXTextExtractor.get_docx_page_count(docx_path)
         text = ""
         fonts = defaultdict(int)
         for paragraph in doc.paragraphs:

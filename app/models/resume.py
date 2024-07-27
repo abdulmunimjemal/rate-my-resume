@@ -7,4 +7,4 @@ class Resume(BaseModel):
 
 class ScoreResponse(BaseModel):
     score: int
-    feedback: str
+    feedback: dict
