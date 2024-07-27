@@ -2,6 +2,16 @@ from abc import ABC, abstractmethod
 import docx
 import fitz
 import os
+import zipfile, re
+
+# Helper 
+
+def format_fonts(fonts: dict):
+    formatted_fonts = ""
+    for font, count in fonts.items():
+        if font[0]:
+            formatted_fonts += f"Font {font[0]} of Size {font[1]} pt appears {count} times\n"
+    return formatted_fonts
 
 # Abstract Strategy
 class TextExtractorStrategy(ABC):
@@ -14,11 +24,20 @@ class PDFTextExtractor(TextExtractorStrategy):
     def extract_text(self, pdf_path):
         document = fitz.open(pdf_path)
         text = ""
+        fonts = defaultdict(int)
         for page_num in range(len(document)):
             page = document.load_page(page_num)
             text += page.get_text("text")
+            blocks = page.get_text("dict")["blocks"]
+            for block in blocks:
+                for line in block["lines"]:
+                    for span in line["spans"]:
+                        font_key = (span["font"], span["size"])
+                        fonts[font_key] += 1
+                        
         num_pages = len(document)
-        return text, num_pages
+        fonts = format_fonts(fonts)
+        return text, num_pages, fonts
 
 # Concrete Strategy for DOCX
 class DOCXTextExtractor(TextExtractorStrategy):
@@ -29,8 +48,11 @@ class DOCXTextExtractor(TextExtractorStrategy):
         fonts = defaultdict(int)
         for paragraph in doc.paragraphs:
             text += paragraph.text + "\n"
-        fonts = format_fonts(dict(fonts))
-        return text, num_pages
+            for run in paragraph.runs:
+                font_key = (run.font.name, run.font.size.pt if run.font.size else None)
+                fonts[font_key] += 1
+        fonts = format_fonts(fonts)
+        return text, num_pages, fonts
     
     @staticmethod
     def get_docx_page_count(docx_fpath):
