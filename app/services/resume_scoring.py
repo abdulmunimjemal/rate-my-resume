@@ -1,9 +1,7 @@
 from string import Template
-from app.config import settings
+from app.config.config import settings
 from app.models.resume import Resume, ScoreResponse
 from app.utils.scoring_utils import parse_llm_response
-import json
-
 
 PROMPT_TEMPLATE = Template("""
     You are a resume review expert. Your task is to score the following resume based on the provided checklist, and then give detailed feedback with specific examples from the resume. The feedback should highlight areas of strength, areas for improvement, and include suggestions for enhancement.

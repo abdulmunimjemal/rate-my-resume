@@ -3,7 +3,7 @@ from app.models.resume import Resume, ScoreResponse
 from app.services.resume_scoring import score_resume
 from app.services.file_parser import TextExtractor
 from app.enums.file_extension import AllowedFileExtension
-from app.config import settings
+from app.config.config import settings
 from app.utils.file_utils import healthy_file_size
 from app.utils.hashing_utils import calculate_file_hash
 from llama_index.llms.together import TogetherLLM
