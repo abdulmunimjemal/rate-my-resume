@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import resume
+from app.routers import resume_router, health_checker
 
 app = FastAPI(
     title="Resume Scoring API",
@@ -17,7 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(resume.router, prefix="/resume", tags=["resume"])
+app.include_router(resume_router.router, prefix="/resume", tags=["resume"])
+app.include_router(health_checker.router, prefix="/health", tags=["health"])
 
 @app.get("/")
 def read_root():
