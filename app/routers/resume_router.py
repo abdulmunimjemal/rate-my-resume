@@ -13,21 +13,28 @@ import redis
 
 router = APIRouter()
 
+LLM_CLIENT = None
+REDIS_CLIENT = None
+
 # Dependency Injection for LLM client
-def get_llm_client():
-    return TogetherLLM(
-    model=settings.MODEL_NAME,
-    api_key=settings.TOGETHER_API_KEY,
-    max_tokens=settings.MAX_TOKENS,
-)
+def get_llm_client(LLM_CLIENT=LLM_CLIENT):
+    if not LLM_CLIENT:
+        LLM_CLIENT = TogetherLLM(
+                        model=settings.MODEL_NAME,
+                        api_key=settings.TOGETHER_API_KEY,
+                        max_tokens=settings.MAX_TOKENS,
+        )
+    return LLM_CLIENT
 
 # Dependency Injection for Redis client
-def get_redis_client():
-    return redis.Redis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    password=settings.REDIS_PASSWORD
-)
+def get_redis_client(REDIS_CLIENT=REDIS_CLIENT):
+    if not REDIS_CLIENT:
+        REDIS_CLIENT = redis.Redis(
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            password=settings.REDIS_PASSWORD
+        )
+    return REDIS_CLIENT
 
 
 @router.post("/score", response_model=dict)
