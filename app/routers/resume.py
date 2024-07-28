@@ -12,7 +12,7 @@ import redis
 
 router = APIRouter()
 
-# DI for LLM client
+# Dependency Injection for LLM client
 def get_llm_client():
     return TogetherLLM(
     model=settings.MODEL_NAME,
@@ -20,7 +20,7 @@ def get_llm_client():
     max_tokens=settings.MAX_TOKENS,
 )
 
-# DI for Redis client
+# Dependency Injection for Redis client
 def get_redis_client():
     return redis.Redis(
     host=settings.REDIS_HOST,
