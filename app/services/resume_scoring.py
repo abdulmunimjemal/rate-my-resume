@@ -1,6 +1,7 @@
 from string import Template
 from app.config import settings
 from app.models.resume import Resume, ScoreResponse
+from app.utils.scoring_utils import parse_llm_response
 import json
 
 
@@ -81,15 +82,6 @@ PROMPT_TEMPLATE = Template("""
         }
     }```
     """)
-
-def parse_llm_response(response: str) -> ScoreResponse:
-    try:
-        result = response.replace('```', '')
-        result = json.loads(result)
-        return ScoreResponse(**result)
-    except Exception as e:
-        raise ValueError(f"Failed to parse LLM response: {e}")
-
 
 def score_resume(resume: Resume, Client) -> ScoreResponse:
     prompt = PROMPT_TEMPLATE.substitute(

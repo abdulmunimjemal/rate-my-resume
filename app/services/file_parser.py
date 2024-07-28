@@ -4,15 +4,7 @@ import fitz
 import os
 import zipfile, re
 from collections import defaultdict
-
-# Helper 
-
-def format_fonts(fonts: dict):
-    formatted_fonts = ""
-    for font, count in fonts.items():
-        if font[0]:
-            formatted_fonts += f"Font {font[0]} of Size {round(font[1])} pt appears {count} times\n"
-    return formatted_fonts
+from app.utils.scoring_utils import format_fonts
 
 # Abstract Strategy
 class TextExtractorStrategy(ABC):
