@@ -77,7 +77,9 @@ async def score_resume_endpoint(
     return {"result_id": result_id}
 
 @router.get("/score/{result_id}", response_model=ScoreResponse)
-async def get_result(result_id: str):
+async def get_result(
+    result_id: str,
+    redis_client: redis.Redis = Depends(get_redis_client)):
     result = redis_client.get(result_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Result not found.")
