@@ -4,9 +4,9 @@ from app.config.config import settings
 from llama_index.llms.together import TogetherLLM
 import redis
 
-
 router = APIRouter()
 
+# Dependency for Redis client
 def get_redis_client():
     return redis.Redis(
         host=settings.REDIS_HOST,
@@ -14,6 +14,7 @@ def get_redis_client():
         password=settings.REDIS_PASSWORD
     )
 
+# Dependency for LLM client
 def get_llm_client():
     return TogetherLLM(
         model=settings.MODEL_NAME,
@@ -21,9 +22,11 @@ def get_llm_client():
         max_tokens=settings.MAX_TOKENS,
     )
 
+# Health check function for LLM
 def check_llm_health(llm_client: TogetherLLM):
     try:
-        llm_client.generate_response("Hello, world!")
+        # imple check by generating a response
+        llm_client.complete("Hello, World!")
         return True
     except Exception as e:
         return False
@@ -32,13 +35,12 @@ def check_llm_health(llm_client: TogetherLLM):
 async def health_check(
     redis_client: redis.Redis = Depends(get_redis_client),
     llm_client: TogetherLLM = Depends(get_llm_client),
-    routes: list[APIRoute] = Depends(lambda : router.routes)
 ):
     health_status = {
         "status": "healthy",
         "details": {}
-    }    
-    
+    }
+
     # Redis
     try:
         if not redis_client.ping():
@@ -56,15 +58,8 @@ async def health_check(
     except Exception as e:
         health_status["details"]["llm"] = str(e)
         health_status["status"] = "unhealthy"
-    
-    # Check if all routes are up
-    for route in routes:
-        try:
-            response = await route.endpoint()
-            if response.status_code == 500:
-                raise Exception(f"Route {route.path} is down. HTTP Status Code: {response.status_code}")
-        except Exception as e:
-            health_status["details"][route.path] = str(e)
-            health_status["status"] = "unhealthy"
-    
+
+    if health_status["status"] == "unhealthy":
+        raise HTTPException(status_code=500, detail=health_status)
+
     return health_status
