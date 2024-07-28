@@ -6,6 +6,7 @@ from app.enums.file_extension import AllowedFileExtension
 from app.config.config import settings
 from app.utils.file_utils import healthy_file_size
 from app.utils.hashing_utils import calculate_file_hash
+from app.utils.logger import logger
 from llama_index.llms.together import TogetherLLM
 import json, os
 import redis
@@ -49,7 +50,6 @@ async def score_resume_endpoint(
     result_id = calculate_file_hash(file.file)
     cached_result = redis_client.get(result_id)
     if cached_result:
-        print("Cached result found")
         return {"result_id": result_id } # the file hash as result id
     
     # upload dir existance check
@@ -61,14 +61,14 @@ async def score_resume_endpoint(
     try:
         text, pages, fonts = text_extractor.extract_text(file_path)
     except Exception as e:
-        print(e)
+        logger.error("Error extracting text: %s", e)
         raise HTTPException(status_code=400, detail=f"Error extracting text from the resume.")
     try:
         resume = Resume(text=text, pages=pages, fonts=fonts)
         result = score_resume(resume, llm_client)
         redis_client.set(result_id, json.dumps(result.dict()), ex=settings.REDIS_EXPIRATION)
     except Exception as e:
-        print(e)
+        logger.error("Error scoring the resume: %s", e)
         raise HTTPException(status_code=500, detail="Error scoring the resume.")
     
     # post processing cleanup
