@@ -10,8 +10,9 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
   - [Usage](#usage)
   - [API Endpoints](#api-endpoints)
     - [Score Resume](#score-resume)
+    - [Health Checker](#health-checking)
   - [Project Structure](#project-structure)
-  - [Conributing](#conributing)
+  - [Contributing](#conributing)
 
 ## Installation
 
@@ -59,14 +60,21 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
 - **Endpoint**: `/resume/score`
 - **Method**: `POST`
 - **Request Body**: Upload a file (`.pdf` or `.docx`)
-- **Response**: Returns the score and feedback for the uploaded resume
-- **Example Response**:
+- **Response**: `{'result_id': id }`
+
+- **Endpoint**: `/resume/score/{id}`
+- **Method**: `GET`
+- **Request Body**: Result ID 
+- **Response**: Feedback Details (Example Below)
+
+- **Example Response** (for `GET /resume/score/{id}`):
 
   ```bash
   {
   "score": 83,
   "feedback": {
       "content": {
+      "score": 80,
       "strengths": [
           "The resume contains all the necessary sections, including Experience, Relevant Projects, Education, and Contact information.",
           "The Skills section is well-organized and includes relevant programming languages, frameworks, and tools.",
@@ -82,6 +90,7 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
       ]
       },
       "format": {
+      "score": 88,
       "strengths": [
           "The resume is well-organized and easy to read, with clear headings and bullet points.",
           "The use of whitespace is balanced, making the resume visually appealing."
@@ -96,6 +105,7 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
       ]
       },
       "additionals": {
+      "score": 77,
       "strengths": [
           "The resume effectively highlights achievements and recognition in the Experience section.",
           "The use of bolding to highlight technologies and tools is effective."
@@ -110,6 +120,11 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
     }
   }
   ```
+### Health Checking
+
+- **Endpoint**: `/health/status/`
+- **Method**: `GET`
+- **Response**: JSON Response on Health Status of its Components
 
 ## Project Structure
 
@@ -118,22 +133,25 @@ The project structure is as follows:
 ```bash
 rate-my-resume/
 ├── app/
-│   ├── __init__.py
 │   ├── main.py
-│   ├── config.py
+│   ├── config/
+│   │   ├── config.py
+│   │   ├── logging_config.py
 │   ├── enums/
-│   │   ├── __init__.py
 │   │   ├── file_extension.py
 │   ├── models/
-│   │   ├── __init__.py
 │   │   ├── resume.py
 │   ├── routers/
-│   │   ├── __init__.py
-│   │   ├── resume.py
+│   │   ├── resume_router.py
+│   │   ├── health_router.py
 │   ├── services/
-│   │   ├── __init__.py
 │   │   ├── resume_scoring.py
 │   │   ├── file_parser.py
+│   ├── utils/
+│   │   ├── file_utils.py
+│   │   ├── hashing_utils.py
+│   │   ├── logger.py
+│   │   ├── scoring_utils.py
 ├── .env
 ├── requirements.txt
 └── README.md
