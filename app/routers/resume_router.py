@@ -68,6 +68,7 @@ async def score_resume_endpoint(
     try:
         text, pages, fonts = text_extractor.extract_text(file_path)
     except Exception as e:
+        
         logger.error("Error extracting text: %s", e)
         raise HTTPException(status_code=400, detail=f"Error extracting text from the resume.")
     try:
@@ -77,10 +78,8 @@ async def score_resume_endpoint(
     except Exception as e:
         logger.error("Error scoring the resume: %s", e)
         raise HTTPException(status_code=500, detail="Error scoring the resume.")
-    
-    # post processing cleanup
-    if os.path.exists(file_path):
-        os.remove(file_path)
+    finally:
+        if os.path.exists(file_path): os.remove(file_path)
     return {"result_id": result_id}
 
 @router.get("/score/{result_id}", response_model=ScoreResponse)
