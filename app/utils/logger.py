@@ -19,5 +19,11 @@ class Logger:
     
     def debug(self, msg, *args, **kwargs):
         self.logger.debug(msg, *args, **kwargs)
+    
+    def warning(self, msg, *args, **kwargs):
+        self.logger.warning(msg, *args, **kwargs)
+    
+    def critical(self, msg, *args, **kwargs):
+        self.logger.critical(msg, *args, **kwargs)
 
 logger = Logger()

@@ -7,7 +7,7 @@ def setup_logging():
         "disable_existing_loggers": False,
         "formatters": {
             "default": {
-                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                "format": "%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s",
             },
         },
         "handlers": {
@@ -20,11 +20,10 @@ def setup_logging():
                 "formatter": "default",
                 "filename": "app.log",
             },
-            
-          },
+        },
         "root": {
             "handlers": ["console", "file"],
-            "level": "WARNING",
+            "level": "INFO",  # Change to INFO to capture more detailed logs
         },
     }
     dictConfig(logging_config)
