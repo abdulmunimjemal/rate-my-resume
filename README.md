@@ -2,17 +2,24 @@
 
 This project provides a scalable FastAPI backend for scoring resumes using the TogetherLLM model. The API analyzes the content and format of resumes and provides a detailed score and feedback.
 
+## Preview
+
+![](https://github.com/abdulmunimjemal/rate-my-resume/blob/main/media/preview.gif)
+
+Frontend for this project can be found [here](https://github.com/ishaksebsib/ai-rate-my-resume).
+
 ## Table of Contents
 
 - [Rate My Resume: Resume Scoring API](#rate-my-resume-resume-scoring-api)
+  - [Preview](#preview)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
   - [API Endpoints](#api-endpoints)
     - [Score Resume](#score-resume)
-    - [Health Checker](#health-checking)
+    - [Health Checking](#health-checking)
   - [Project Structure](#project-structure)
-  - [Contributing](#conributing)
+  - [Conributing](#conributing)
 
 ## Installation
 
@@ -64,7 +71,7 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
 
 - **Endpoint**: `/resume/score/{id}`
 - **Method**: `GET`
-- **Request Body**: Result ID 
+- **Request Body**: Result ID
 - **Response**: Feedback Details (Example Below)
 
 - **Example Response** (for `GET /resume/score/{id}`):
@@ -120,6 +127,7 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
     }
   }
   ```
+
 ### Health Checking
 
 - **Endpoint**: `/health/status/`
