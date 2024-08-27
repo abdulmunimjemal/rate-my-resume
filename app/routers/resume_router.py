@@ -48,12 +48,12 @@ async def score_resume_endpoint(
     
     # upload dir existance check
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    text_extractor = await TextExtractor()
+    text_extractor = TextExtractor()
         
     with open(file_path, "wb") as buffer:
         buffer.write(file.file.read())
     try:
-        text, pages, fonts = text_extractor.extract_text(file_path)
+        text, pages, fonts =  await text_extractor.extract_text(file_path)
     except Exception as e:
         
         logger.error("Error extracting text: %s", e)

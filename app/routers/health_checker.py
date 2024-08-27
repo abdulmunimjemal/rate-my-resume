@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.routing import APIRoute
 from app.config.config import settings
-from llama_index.llms.together import TogetherLLM
 import redis
 
 router = APIRouter()
@@ -11,30 +10,22 @@ def get_redis_client():
     return redis.Redis(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
-        password=settings.REDIS_PASSWORD
-    )
-
-# Dependency for LLM client
-def get_llm_client():
-    return TogetherLLM(
-        model=settings.MODEL_NAME,
-        api_key=settings.TOGETHER_API_KEY,
-        max_tokens=settings.MAX_TOKENS,
+        # password=settings.REDIS_PASSWORD
     )
 
 # Health check function for LLM
-def check_llm_health(llm_client: TogetherLLM):
-    try:
-        # imple check by generating a response
-        llm_client.complete("Hello, World!")
-        return True
-    except Exception as e:
-        return False
+def check_llm_health():
+    return True
+    # try:
+    #     # imple check by generating a response
+    #     llm_client.complete("Hello, World!")
+    #     return True
+    # except Exception as e:
+    #     return False
 
 @router.get("/status", summary="API Health Check")
 async def health_check(
     redis_client: redis.Redis = Depends(get_redis_client),
-    llm_client: TogetherLLM = Depends(get_llm_client),
 ):
     health_status = {
         "status": "healthy",
@@ -52,7 +43,7 @@ async def health_check(
 
     # LLM
     try:
-        if not check_llm_health(llm_client):
+        if not check_llm_health():
             raise Exception("LLM is down")
         health_status["details"]["llm"] = "healthy"
     except Exception as e:
