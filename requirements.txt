@@ -1,5 +1,3 @@
-llama-index
-llama-index-llms-together
 python-dotenv
 python-docx
 PyMuPDF
@@ -8,3 +6,5 @@ uvicorn
 pydantic
 redis
 redis[hiredis]
+langchain
+langchain-openai

@@ -7,24 +7,12 @@ from app.config.config import settings
 from app.utils.file_utils import healthy_file_size
 from app.utils.hashing_utils import calculate_file_hash
 from app.utils.logger import logger
-from llama_index.llms.together import TogetherLLM
 import json, os
 import redis
 
 router = APIRouter()
 
-LLM_CLIENT = None
 REDIS_CLIENT = None
-
-# Dependency Injection for LLM client
-def get_llm_client(LLM_CLIENT=LLM_CLIENT):
-    if not LLM_CLIENT:
-        LLM_CLIENT = TogetherLLM(
-                        model=settings.MODEL_NAME,
-                        api_key=settings.TOGETHER_API_KEY,
-                        max_tokens=settings.MAX_TOKENS,
-        )
-    return LLM_CLIENT
 
 # Dependency Injection for Redis client
 def get_redis_client(REDIS_CLIENT=REDIS_CLIENT):
@@ -40,8 +28,7 @@ def get_redis_client(REDIS_CLIENT=REDIS_CLIENT):
 @router.post("/score", response_model=dict)
 async def score_resume_endpoint(
     file: UploadFile = File(...),
-    redis_client: redis.Redis = Depends(get_redis_client),
-    llm_client: TogetherLLM = Depends(get_llm_client)):
+    redis_client: redis.Redis = Depends(get_redis_client)):
     file_path = f"tmp/{file.filename}"
     
     # file size check
@@ -73,7 +60,7 @@ async def score_resume_endpoint(
         raise HTTPException(status_code=400, detail=f"Error extracting text from the resume.")
     try:
         resume = Resume(text=text, pages=pages, fonts=fonts)
-        result = score_resume(resume, llm_client)
+        result = score_resume(resume)
         redis_client.set(result_id, json.dumps(result.dict()), ex=settings.REDIS_EXPIRATION)
     except Exception as e:
         logger.error("Error scoring the resume: %s", e)

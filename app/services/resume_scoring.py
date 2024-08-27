@@ -1,9 +1,10 @@
-from string import Template
 from app.config.config import settings
 from app.models.resume import Resume, ScoreResponse
-from app.utils.scoring_utils import parse_llm_response
+from langchain.prompts import PromptTemplate
+from langchain.output_parsers import PydanticOutputParser
+from langchain_openai import ChatOpenAI
 
-PROMPT_TEMPLATE = Template("""
+PROMPT_TEMPLATE = """
     You are a resume review expert. Your task is to score the following resume based on the provided checklist, and then give detailed feedback with specific examples from the resume. The feedback should highlight areas of strength, areas for improvement, and include suggestions for enhancement.
 
     **Content Checklist (0-3 points each):**
@@ -38,57 +39,34 @@ PROMPT_TEMPLATE = Template("""
     Here is the resume:
 
     Number of Pages: 
-        $pages
+        {pages}
     Fonts: 
-        $fonts
+        {fonts}
     Resume Text:
-        $resume_text
+        {resume_text}
 
     Score the resume based on the checklist and provide detailed feedback, including specific examples from the resume for improvement. Calculate the total score out of a possible 100 points.
-    Return your whole response in JSON format, the response should start and end with the JSON with no additional texts from your side.
-    It should have the following keys:
-    - "score": the total score out of 100
-    - "feedback": the detailed feedback with specific examples from the resume, including areas of strength, areas for improvement, and suggestions for enhancement
-
     Scoring should be assumed based on your expertise and the checklist provided.
     
-    
-    USE THE FOLLOWING FORMAT FOR YOUR RESPONSE:
-    ```
-    {
-        "score": 90,
-        "feedback": {
-            "content": {
-                "score": 89,
-                "strengths": [],
-                "areas_for_improvement": [],
-                "suggestions": []
-            },
-            "format": {
-                "score": 90,
-                "strengths": [],
-                "areas_for_improvement": [],
-                "suggestions": []
-                },
-            "additionals": {
-                "score": 91,
-                "strengths": [],
-                "areas_for_improvement": [],
-                "suggestions": []
-            }
-            
-        }
-    }```
-    """)
+    {format_instructions}
+    """
 
-def score_resume(resume: Resume, Client) -> ScoreResponse:
-    prompt = PROMPT_TEMPLATE.substitute(
-        pages=resume.pages,
-        fonts=resume.fonts,
-        resume_text=resume.text,
-    )
-    response = Client.stream_complete(prompt)
-    result = ''.join([chunk.delta for chunk in response])
-    jsonified = parse_llm_response(result)
-    return jsonified
+parser = PydanticOutputParser(pydantic_object=ScoreResponse)
+llm = ChatOpenAI(settings.openai_api_key, settings.openai_model_id, parser=parser)
+prompt = PromptTemplate(
+    template=PROMPT_TEMPLATE,
+    input_variables=["pages", "fonts", "resume_text"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
+chain = prompt | llm | parser
+
+def score_resume(resume: Resume) -> ScoreResponse:
+    variables = {
+        "pages": resume.pages,
+        "fonts": resume.fonts,
+        "resume_text": resume.text,
+    }
+    output = chain.invoke(variables)
+    return output
 
