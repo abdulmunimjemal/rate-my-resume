@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "ai rate my resume"
+version = "1.0.0"
+description = "Resume rating server"
+authors = ["Abdulmunim <66489217+abdulmunimjemal@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-dotenv = "^1.0.1"
+python-docx = "^1.1.2"
+pymupdf = "^1.24.9"
+fastapi = "^0.112.2"
+uvicorn = "^0.30.6"
+pydantic = "^2.8.2"
+redis = {extras = ["hiredis"], version = "^5.0.8"}
+langchain = "^0.2.14"
+langchain-openai = "^0.1.22"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
