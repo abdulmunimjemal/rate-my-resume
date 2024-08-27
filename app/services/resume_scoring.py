@@ -45,14 +45,17 @@ PROMPT_TEMPLATE = """
     Resume Text:
         {resume_text}
 
-    Score the resume based on the checklist and provide detailed feedback, including specific examples from the resume for improvement. Calculate the total score out of a possible 100 points.
+    Score the resume based on the checklist and provide detailed feedback, including specific examples from the resume for improvement. 
+    Calculate the total score out of a possible 100 points.
+    Each section of the resume should be scored based on the checklist provided (each out of 100, then overallout of 100).
+    
     Scoring should be assumed based on your expertise and the checklist provided.
     
     {format_instructions}
     """
 
 parser = PydanticOutputParser(pydantic_object=ScoreResponse)
-llm = ChatOpenAI(settings.openai_api_key, settings.openai_model_id, parser=parser)
+llm = ChatOpenAI(model=settings.MODEL_NAME)
 prompt = PromptTemplate(
     template=PROMPT_TEMPLATE,
     input_variables=["pages", "fonts", "resume_text"],

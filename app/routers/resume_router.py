@@ -20,7 +20,7 @@ def get_redis_client(REDIS_CLIENT=REDIS_CLIENT):
         REDIS_CLIENT = redis.Redis(
             host=settings.REDIS_HOST,
             port=settings.REDIS_PORT,
-            password=settings.REDIS_PASSWORD
+            # password=settings.REDIS_PASSWORD
         )
     return REDIS_CLIENT
 
@@ -48,7 +48,7 @@ async def score_resume_endpoint(
     
     # upload dir existance check
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    text_extractor = TextExtractor()
+    text_extractor = await TextExtractor()
         
     with open(file_path, "wb") as buffer:
         buffer.write(file.file.read())
