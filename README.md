@@ -8,19 +8,6 @@ This project provides a scalable FastAPI backend for scoring resumes using the T
 
 Frontend for this project can be found [here](https://github.com/ishaksebsib/ai-rate-my-resume).
 
-## Table of Contents
-
-- [Rate My Resume: Resume Scoring API](#rate-my-resume-resume-scoring-api)
-  - [Preview](#preview)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [API Endpoints](#api-endpoints)
-    - [Score Resume](#score-resume)
-    - [Health Checking](#health-checking)
-  - [Project Structure](#project-structure)
-  - [Conributing](#conributing)
-
 ## Installation
 
 1. **Clone the repository**:
@@ -144,27 +131,20 @@ rate-my-resume/
 │   ├── main.py
 │   ├── config/
 │   │   ├── config.py
-│   │   ├── logging_config.py
+│   │   ├── logging_config.py 
 │   ├── enums/
-│   │   ├── file_extension.py
 │   ├── models/
 │   │   ├── resume.py
 │   ├── routers/
-│   │   ├── resume_router.py
-│   │   ├── health_router.py
 │   ├── services/
 │   │   ├── resume_scoring.py
 │   │   ├── file_parser.py
 │   ├── utils/
-│   │   ├── file_utils.py
-│   │   ├── hashing_utils.py
-│   │   ├── logger.py
-│   │   ├── scoring_utils.py
 ├── .env
 ├── requirements.txt
 └── README.md
 ```
 
-## Conributing
+## Contributing
 
 Contributions are welcome! Feel free to open an issue or submit a pull request if you have any improvements or suggestions.
